@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rex大叔 AI智能可轉債知識庫系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-section h1 {
+            color: #1e40af;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .logo-section .subtitle {
+            color: #6b7280;
+            font-size: 1em;
+        }
+
+        .stats-section {
+            display: flex;
+            gap: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #8b5cf6;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+
+        /* Search Bar */
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139,92,246,0.1);
+        }
+
+        .search-button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .search-button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-group label {
+            color: #6b7280;
+            font-weight: bold;
+        }
+
+        .filter-select {
+            padding: 8px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-card h3 {
+            color: #1e40af;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .category-list {
+            list-style: none;
+        }
+
+        .category-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #f9fafb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-item:hover {
+            background: #ede9fe;
+            transform: translateX(5px);
+        }
+
+        .category-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .category-count {
+            background: white;
+            color: #8b5cf6;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .category-item.active .category-count {
+            background: rgba(255,255,255,0.3);
+            color: white;
+        }
+
+        /* Tags */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            padding: 6px 12px;
+            background: #f3f4f6;
+            border-radius: 15px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tag:hover {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .tag.active {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        /* Articles Section */
+        .articles-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .articles-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .articles-title {
+            font-size: 1.5em;
+            color: #1e40af;
+        }
+
+        .articles-count {
+            color: #6b7280;
+        }
+
+        /* Article Card */
+        .article-card {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .article-card:hover {
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left-color: #8b5cf6;
+            transform: translateX(5px);
+        }
+
+        .article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .article-title {
+            font-size: 1.2em;
+            color: #1e40af;
+            font-weight: bold;
+            flex: 1;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 15px;
+            color: #6b7280;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .article-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .article-summary {
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .article-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .article-tag {
+            padding: 4px 10px;
+            background: #e0e7ff;
+            color: #5b21b6;
+            border-radius: 12px;
+            font-size: 0.8em;
+        }
+
+        .article-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .article-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-button {
+            padding: 6px 15px;
+            border: 1px solid #8b5cf6;
+            background: white;
+            color: #8b5cf6;
+            border-radius: 8px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-button:hover {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .rex-quote {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-style: italic;
+            color: #92400e;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 900px;
+            margin: 50px auto;
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            color: #6b7280;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #1e40af;
+        }
+
+        .modal-article-title {
+            font-size: 2em;
+            color: #1e40af;
+            margin-bottom: 20px;
+        }
+
+        .modal-article-content {
+            line-height: 1.8;
+            color: #374151;
+        }
+
+        .key-points {
+            background: #f0fdf4;
+            border-left: 4px solid #10b981;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .key-points h4 {
+            color: #065f46;
+            margin-bottom: 10px;
+        }
+
+        .key-points ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .key-points li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .key-points li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #6b7280;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stats-section {
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .logo-section h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1>💭 Rex大叔 AI智能可轉債知識庫</h1>
+                    <p class="subtitle">整合25年經驗智慧 × 26篇深度文章 × 智能搜尋系統</p>
+                </div>
+                <div class="stats-section">
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalArticles">0</div>
+                        <div class="stat-label">篇文章</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalCategories">0</div>
+                        <div class="stat-label">個分類</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalTags">0</div>
+                        <div class="stat-label">個標籤</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-bar">
+                <input type="text" 
+                       class="search-input" 
+                       id="searchInput" 
+                       placeholder="🔍 搜尋文章標題、內容、關鍵字...（例如：競拍、融資、風險管理）">
+                <button class="search-button" onclick="performSearch()">搜尋</button>
+            </div>
+            <div class="filters">
+                <div class="filter-group">
+                    <label>📂 分類：</label>
+                    <select class="filter-select" id="categoryFilter" onchange="filterArticles()">
+                        <option value="">全部分類</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>👥 對象：</label>
+                    <select class="filter-select" id="audienceFilter" onchange="filterArticles()">
+                        <option value="">全部對象</option>
+                        <option value="新手">新手</option>
+                        <option value="進階">進階</option>
+                        <option value="專業">專業</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>📅 排序：</label>
+                    <select class="filter-select" id="sortFilter" onchange="filterArticles()">
+                        <option value="date-desc">日期（新到舊）</option>
+                        <option value="date-asc">日期（舊到新）</option>
+                        <option value="time-asc">閱讀時間（短到長）</option>
+                        <option value="time-desc">閱讀時間（長到短）</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Categories -->
+                <div class="sidebar-card">
+                    <h3>📂 文章分類</h3>
+                    <ul class="category-list" id="categoryList"></ul>
+                </div>
+
+                <!-- Hot Tags -->
+                <div class="sidebar-card">
+                    <h3>🏷️ 熱門標籤</h3>
+                    <div class="tags-container" id="hotTags"></div>
+                </div>
+
+                <!-- Rex Quote -->
+                <div class="sidebar-card">
+                    <h3>💬 Rex金句</h3>
+                    <div class="rex-quote" id="randomQuote">載入中...</div>
+                </div>
+            </div>
+
+            <!-- Articles -->
+            <div class="articles-section">
+                <div class="articles-header">
+                    <h2 class="articles-title">📚 文章列表</h2>
+                    <span class="articles-count" id="articlesCount">共 0 篇</span>
+                </div>
+                <div id="articlesList" class="loading">載入中...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="articleModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let allArticles = [];
+        let filteredArticles = [];
+        let currentCategory = '';
+        let currentTags = [];
+        let allQuotes = [];
+
+        // Load Knowledge Base Data
+        async function loadKnowledgeBase() {
+            try {
+                const response = await fetch('kb_data_complete.json');
+                const data = await response.json();
+                
+                allArticles = data.articles || [];
+                filteredArticles = [...allArticles];
+                
+                // Extract all Rex quotes
+                allQuotes = [];
+                allArticles.forEach(article => {
+                    if (article.rex_quotes) {
+                        allQuotes.push(...article.rex_quotes);
+                    }
+                });
+                
+                // Update stats
+                updateStats(data.knowledge_base_info);
+                
+                // Initialize UI
+                initializeCategories(data.knowledge_base_info.categories);
+                initializeTags(data.knowledge_base_info.tags);
+                displayArticles();
+                showRandomQuote();
+                
+            } catch (error) {
+                console.error('載入知識庫失敗:', error);
+                document.getElementById('articlesList').innerHTML = 
+                    '<div class="empty-state"><div class="empty-state-icon">❌</div><h3>載入失敗</h3><p>請確認 kb_data_complete.json 檔案存在</p></div>';
+            }
+        }
+
+        // Update Stats
+        function updateStats(info) {
+            document.getElementById('totalArticles').textContent = info.total_articles || 0;
+            document.getElementById('totalCategories').textContent = info.categories?.length || 0;
+            document.getElementById('totalTags').textContent = info.tags?.length || 0;
+        }
+
+        // Initialize Categories
+        function initializeCategories(categories) {
+            const categoryList = document.getElementById('categoryList');
+            const categoryFilter = document.getElementById('categoryFilter');
+            
+            // Sidebar
+            categoryList.innerHTML = `
+                <li class="category-item active" onclick="selectCategory('')">
+                    <span>全部文章</span>
+                    <span class="category-count">${allArticles.length}</span>
+                </li>
+            `;
+            
+            categories.forEach(category => {
+                const count = allArticles.filter(a => a.category === category).length;
+                categoryList.innerHTML += `
+                    <li class="category-item" onclick="selectCategory('${category}')">
+                        <span>${category}</span>
+                        <span class="category-count">${count}</span>
+                    </li>
+                `;
+                
+                // Filter dropdown
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categoryFilter.appendChild(option);
+            });
+        }
+
+        // Initialize Tags
+        function initializeTags(tags) {
+            const hotTags = document.getElementById('hotTags');
+            
+            // Get tag counts
+            const tagCounts = {};
+            allArticles.forEach(article => {
+                article.tags?.forEach(tag => {
+                    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                });
+            });
+            
+            // Sort by count and take top 20
+            const sortedTags = Object.entries(tagCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 20);
+            
+            hotTags.innerHTML = sortedTags.map(([tag, count]) => 
+                `<span class="tag" onclick="toggleTag('${tag}')">${tag} (${count})</span>`
+            ).join('');
+        }
+
+        // Select Category
+        function selectCategory(category) {
+            currentCategory = category;
+            
+            // Update UI
+            document.querySelectorAll('.category-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.category-item').classList.add('active');
+            
+            // Update filter
+            document.getElementById('categoryFilter').value = category;
+            
+            filterArticles();
+        }
+
+        // Toggle Tag
+        function toggleTag(tag) {
+            const index = currentTags.indexOf(tag);
+            if (index > -1) {
+                currentTags.splice(index, 1);
+            } else {
+                currentTags.push(tag);
+            }
+            
+            // Update UI
+            document.querySelectorAll('.tag').forEach(t => {
+                if (t.textContent.startsWith(tag)) {
+                    t.classList.toggle('active');
+                }
+            });
+            
+            filterArticles();
+        }
+
+        // Perform Search
+        function performSearch() {
+            filterArticles();
+        }
+
+        // Filter Articles
+        function filterArticles() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const audience = document.getElementById('audienceFilter').value;
+            const sort = document.getElementById('sortFilter').value;
+            
+            // Filter
+            filteredArticles = allArticles.filter(article => {
+                // Search term
+                const matchesSearch = !searchTerm || 
+                    article.title?.toLowerCase().includes(searchTerm) ||
+                    article.summary?.toLowerCase().includes(searchTerm) ||
+                    article.content?.toLowerCase().includes(searchTerm) ||
+                    article.tags?.some(tag => tag.toLowerCase().includes(searchTerm));
+                
+                // Category
+                const matchesCategory = !category || article.category === category;
+                
+                // Audience
+                const matchesAudience = !audience || article.target_audience === audience;
+                
+                // Tags
+                const matchesTags = currentTags.length === 0 || 
+                    currentTags.every(tag => article.tags?.includes(tag));
+                
+                return matchesSearch && matchesCategory && matchesAudience && matchesTags;
+            });
+            
+            // Sort
+            filteredArticles.sort((a, b) => {
+                switch(sort) {
+                    case 'date-desc':
+                        return new Date(b.date) - new Date(a.date);
+                    case 'date-asc':
+                        return new Date(a.date) - new Date(b.date);
+                    case 'time-asc':
+                        return (a.reading_time || 0) - (b.reading_time || 0);
+                    case 'time-desc':
+                        return (b.reading_time || 0) - (a.reading_time || 0);
+                    default:
+                        return 0;
+                }
+            });
+            
+            displayArticles();
+        }
+
+        // Display Articles
+        function displayArticles() {
+            const articlesList = document.getElementById('articlesList');
+            const articlesCount = document.getElementById('articlesCount');
+            
+            articlesCount.textContent = `共 ${filteredArticles.length} 篇`;
+            
+            if (filteredArticles.length === 0) {
+                articlesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>沒有找到文章</h3>
+                        <p>試試調整搜尋條件或篩選器</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            articlesList.innerHTML = filteredArticles.map(article => `
+                <div class="article-card" onclick="showArticleDetail('${article.id}')">
+                    <div class="article-header">
+                        <div class="article-title">${article.title}</div>
+                    </div>
+                    <div class="article-meta">
+                        <span class="article-meta-item">📅 ${article.date}</span>
+                        <span class="article-meta-item">📂 ${article.category}</span>
+                        <span class="article-meta-item">👥 ${article.target_audience || '通用'}</span>
+                        <span class="article-meta-item">⏱️ ${article.reading_time || 10} 分鐘</span>
+                    </div>
+                    <div class="article-summary">${article.summary}</div>
+                    ${article.tags && article.tags.length > 0 ? `
+                        <div class="article-tags">
+                            ${article.tags.slice(0, 5).map(tag => 
+                                `<span class="article-tag">${tag}</span>`
+                            ).join('')}
+                        </div>
+                    ` : ''}
+                    ${article.rex_quotes && article.rex_quotes.length > 0 ? `
+                        <div class="rex-quote">💬 「${article.rex_quotes[0]}」</div>
+                    ` : ''}
+                    <div class="article-footer">
+                        <span style="color: #8b5cf6; font-weight: bold;">點擊查看完整內容 →</span>
+                        <div class="article-actions">
+                            <button class="action-button" onclick="event.stopPropagation(); window.open('${article.url}', '_blank')">
+                                原文連結
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Show Article Detail
+        function showArticleDetail(articleId) {
+            const article = allArticles.find(a => a.id === articleId);
+            if (!article) return;
+            
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <h1 class="modal-article-title">${article.title}</h1>
+                <div class="article-meta">
+                    <span class="article-meta-item">📅 ${article.date}</span>
+                    <span class="article-meta-item">📂 ${article.category}</span>
+                    <span class="article-meta-item">👥 ${article.target_audience || '通用'}</span>
+                    <span class="article-meta-item">⏱️ ${article.reading_time || 10} 分鐘</span>
+                </div>
+                <div style="margin: 20px 0;">
+                    <strong>📝 文章摘要：</strong>
+                    <p style="margin-top: 10px; line-height: 1.8;">${article.summary}</p>
+                </div>
+                ${article.key_points && article.key_points.length > 0 ? `
+                    <div class="key-points">
+                        <h4>🎯 核心重點</h4>
+                        <ul>
+                            ${article.key_points.map(point => `<li>${point}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+                ${article.rex_quotes && article.rex_quotes.length > 0 ? `
+                    <div style="margin: 20px 0;">
+                        <strong>💬 Rex金句：</strong>
+                        ${article.rex_quotes.map(quote => 
+                            `<div class="rex-quote" style="margin-top: 10px;">${quote}</div>`
+                        ).join('')}
+                    </div>
+                ` : ''}
+                ${article.practical_tips && article.practical_tips.length > 0 ? `
+                    <div style="margin: 20px 0;">
+                        <strong>💡 實用建議：</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            ${article.practical_tips.map(tip => `<li style="margin: 8px 0;">${tip}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+                ${article.tags && article.tags.length > 0 ? `
+                    <div style="margin: 20px 0;">
+                        <strong>🏷️ 標籤：</strong>
+                        <div class="article-tags" style="margin-top: 10px;">
+                            ${article.tags.map(tag => `<span class="article-tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center;">
+                    <button class="search-button" onclick="window.open('${article.url}', '_blank')" style="display: inline-block;">
+                        📖 閱讀完整原文
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('articleModal').style.display = 'block';
+        }
+
+        // Close Modal
+        function closeModal() {
+            document.getElementById('articleModal').style.display = 'none';
+        }
+
+        // Show Random Quote
+        function showRandomQuote() {
+            if (allQuotes.length === 0) return;
+            
+            const randomQuote = allQuotes[Math.floor(Math.random() * allQuotes.length)];
+            document.getElementById('randomQuote').textContent = `"${randomQuote}"`;
+            
+            // Refresh every 10 seconds
+            setTimeout(showRandomQuote, 10000);
+        }
+
+        // Search on Enter
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            // Close modal on outside click
+            window.onclick = (event) => {
+                const modal = document.getElementById('articleModal');
+                if (event.target === modal) {
+                    closeModal();
+                }
+            };
+            
+            // Load data
+            loadKnowledgeBase();
+        });
+    </script>
+</body>
+</html>
