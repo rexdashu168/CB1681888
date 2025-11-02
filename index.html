@@ -379,6 +379,73 @@
         .stat-list-item:last-child {
             border-bottom: none;
         }
+
+        /* 知識亮點 */
+        .insight-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid #3498db;
+        }
+
+        .insight-card.warning {
+            border-left-color: #e74c3c;
+            background: linear-gradient(to right, #fff5f5, white);
+        }
+
+        .insight-card.tip {
+            border-left-color: #f39c12;
+            background: linear-gradient(to right, #fffbf5, white);
+        }
+
+        .insight-card.success {
+            border-left-color: #27ae60;
+            background: linear-gradient(to right, #f5fff5, white);
+        }
+
+        .insight-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .insight-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .insight-content {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .insight-source {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+
+        .insight-keywords {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .insight-keyword {
+            background: #ecf0f1;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
     </style>
 </head>
 <body>
@@ -418,6 +485,9 @@
                 <button class="tab-button" onclick="switchTab('stats')">
                     📊 資料統計
                 </button>
+                <button class="tab-button" onclick="switchTab('insights')">
+                    💡 知識亮點
+                </button>
                 <button class="tab-button" onclick="switchTab('cb')">
                     💾 CB資料 <span id="cbCount"></span>
                 </button>
@@ -431,6 +501,11 @@
             <!-- 資料統計 -->
             <div class="tab-content" id="statsTab">
                 <div id="statsResults"></div>
+            </div>
+
+            <!-- 知識亮點 -->
+            <div class="tab-content" id="insightsTab">
+                <div id="insightsResults"></div>
             </div>
 
             <!-- CB資料結果 -->
@@ -519,6 +594,9 @@
 
             // 顯示統計資料
             displayStats(articleResults, cbResults, searchTerm);
+
+            // 顯示知識亮點
+            displayInsights(articleResults, cbResults, searchTerm);
 
             // 顯示CB結果
             displayCB(cbResults, searchTerm);
@@ -828,7 +906,267 @@
             container.innerHTML = html;
         }
 
-        // 切換分頁
+        // 顯示知識亮點
+        function displayInsights(articleResults, cbResults, searchTerm) {
+            const container = document.getElementById('insightsResults');
+            const insights = generateInsights(articleResults, cbResults, searchTerm);
+            
+            if (insights.length === 0) {
+                container.innerHTML = `
+                    <div class="no-result">
+                        <div class="no-result-icon">💡</div>
+                        <h3>暫無知識亮點</h3>
+                        <p>試試搜尋其他關鍵字</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            insights.forEach(insight => {
+                html += `
+                    <div class="insight-card ${insight.type}">
+                        <div class="insight-icon">${insight.icon}</div>
+                        <div class="insight-title">${insight.title}</div>
+                        <div class="insight-content">${insight.content}</div>
+                        ${insight.keywords ? `
+                            <div class="insight-keywords">
+                                ${insight.keywords.map(k => `<span class="insight-keyword">${k}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                        ${insight.source ? `
+                            <div class="insight-source">💬 ${insight.source}</div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // 產生知識亮點
+        function generateInsights(articleResults, cbResults, searchTerm) {
+            const insights = [];
+            const lowerTerm = searchTerm.toLowerCase();
+
+            // === Rex心法：從文章中提取 ===
+            const rexWisdom = extractRexWisdom(articleResults, lowerTerm);
+            insights.push(...rexWisdom);
+
+            // === 風險提醒 ===
+            const riskWarnings = generateRiskWarnings(cbResults, lowerTerm);
+            insights.push(...riskWarnings);
+
+            // === 投資重點 ===
+            const investmentTips = generateInvestmentTips(cbResults, lowerTerm);
+            insights.push(...investmentTips);
+
+            // === 市場觀察 ===
+            const marketObservations = generateMarketObservations(articleResults, cbResults, lowerTerm);
+            insights.push(...marketObservations);
+
+            return insights;
+        }
+
+        // 提取Rex心法
+        function extractRexWisdom(articles, searchTerm) {
+            const wisdom = [];
+            
+            // 競拍相關
+            if (searchTerm.includes('競拍') || searchTerm.includes('投標')) {
+                wisdom.push({
+                    type: 'success',
+                    icon: '🎯',
+                    title: 'Rex大叔的競拍心法',
+                    content: '專注在接近最低得標價得標，從頭到尾都練習只能讓自己寫一個價格。控制投標的價格，專注於風險，不追求報酬。',
+                    keywords: ['競拍策略', '風險控制', '價格紀律'],
+                    source: '來自Rex大叔多年競拍經驗'
+                });
+            }
+
+            // CBAS相關
+            if (searchTerm.includes('cbas') || searchTerm.includes('選擇權')) {
+                wisdom.push({
+                    type: 'warning',
+                    icon: '⚠️',
+                    title: 'CBAS風險提醒',
+                    content: 'CBAS權利金可能歸零，風險較高！CB現股有100元保本，絕對不會歸零。永遠記住：只能說「CBAS權利金歸零」，不能說「CB歸零」。',
+                    keywords: ['CBAS風險', 'CB保本', '正確用詞'],
+                    source: '來自CB知識庫風險認知'
+                });
+            }
+
+            // 融資相關
+            if (searchTerm.includes('融資') || searchTerm.includes('槓桿')) {
+                wisdom.push({
+                    type: 'warning',
+                    icon: '⚠️',
+                    title: 'Rex大叔的融資經驗',
+                    content: '融資曾經對我來說是一場惡夢。融資就像兩面刃，心臟要夠強才行。不要跟散戶站在同一個方向，要看懂融資變化背後的意義。',
+                    keywords: ['融資風險', '散戶心理', '籌碼觀察'],
+                    source: '來自Rex大叔的失敗教訓'
+                });
+            }
+
+            // 風險管理相關
+            if (searchTerm.includes('風險') || searchTerm.includes('管理')) {
+                wisdom.push({
+                    type: 'tip',
+                    icon: '💡',
+                    title: '風險優先的投資理念',
+                    content: '專注於風險，不追求報酬。先想最壞的情況，再考慮獲利空間。給自己多一點犯錯的空間，也讓自己有學習的機會變得更好。',
+                    keywords: ['風險優先', '保守策略', '持續學習'],
+                    source: '來自Rex大叔25年投資經驗'
+                });
+            }
+
+            return wisdom;
+        }
+
+        // 產生風險提醒
+        function generateRiskWarnings(cbResults, searchTerm) {
+            const warnings = [];
+
+            if (cbResults.length > 0) {
+                // 檢查是否有高價CB
+                const highPriceCBs = cbResults.filter(cb => cb.掛牌最高 && cb.掛牌最高 > 200);
+                if (highPriceCBs.length > 0) {
+                    warnings.push({
+                        type: 'warning',
+                        icon: '⚠️',
+                        title: '高價CB風險提醒',
+                        content: `搜尋結果中有 ${highPriceCBs.length} 檔CB掛牌最高價超過200元，屬於高價CB。投資高價CB需要特別注意股價波動風險，建議詳細評估轉換價格與目前股價的關係。`,
+                        keywords: ['高價CB', '波動風險', '轉換價格']
+                    });
+                }
+
+                // 檢查價差
+                const largeSpreads = cbResults.filter(cb => {
+                    if (cb.掛牌最高 && cb.掛牌最低) {
+                        return (cb.掛牌最高 - cb.掛牌最低) > 100;
+                    }
+                    return false;
+                });
+                if (largeSpreads.length > 0) {
+                    warnings.push({
+                        type: 'tip',
+                        icon: '📊',
+                        title: '價差波動觀察',
+                        content: `有 ${largeSpreads.length} 檔CB的掛牌價差超過100元，顯示歷史波動較大。大波動代表機會，但也伴隨風險，建議搭配文章了解波動原因。`,
+                        keywords: ['價差波動', '風險機會', '波動原因']
+                    });
+                }
+            }
+
+            return warnings;
+        }
+
+        // 產生投資重點
+        function generateInvestmentTips(cbResults, searchTerm) {
+            const tips = [];
+
+            if (cbResults.length > 0) {
+                // 檢查接近100元的CB
+                const nearParCBs = cbResults.filter(cb => {
+                    if (cb.掛牌最低) {
+                        return cb.掛牌最低 >= 95 && cb.掛牌最低 <= 105;
+                    }
+                    return false;
+                });
+                
+                if (nearParCBs.length > 0) {
+                    tips.push({
+                        type: 'success',
+                        icon: '💚',
+                        title: '保本效果觀察',
+                        content: `搜尋結果中有 ${nearParCBs.length} 檔CB的掛牌最低價在95-105元之間，顯示保本效果良好。這類CB適合保守型投資人，下檔風險相對較低。`,
+                        keywords: ['保本效果', '下檔保護', '保守投資']
+                    });
+                }
+
+                // 資金用途分析
+                const purposeAnalysis = analyzePurpose(cbResults);
+                if (purposeAnalysis) {
+                    tips.push(purposeAnalysis);
+                }
+            }
+
+            return tips;
+        }
+
+        // 分析資金用途
+        function analyzePurpose(cbResults) {
+            const purposes = {};
+            cbResults.forEach(cb => {
+                const purpose = cb.資金用途 || '';
+                if (purpose.includes('償還') || purpose.includes('借款')) {
+                    purposes['償還借款'] = (purposes['償還借款'] || 0) + 1;
+                } else if (purpose.includes('轉投資') || purpose.includes('投資')) {
+                    purposes['轉投資'] = (purposes['轉投資'] || 0) + 1;
+                } else if (purpose.includes('廠房') || purpose.includes('設備') || purpose.includes('擴建')) {
+                    purposes['資本支出'] = (purposes['資本支出'] || 0) + 1;
+                } else if (purpose.includes('營運')) {
+                    purposes['營運資金'] = (purposes['營運資金'] || 0) + 1;
+                }
+            });
+
+            const mainPurpose = Object.keys(purposes).sort((a, b) => purposes[b] - purposes[a])[0];
+            if (mainPurpose) {
+                let content = '';
+                if (mainPurpose === '償還借款') {
+                    content = `搜尋結果中，多數CB用於償還借款。這類CB通常是借新還舊，建議關注公司財務結構和還款能力。`;
+                } else if (mainPurpose === '轉投資') {
+                    content = `搜尋結果中，多數CB用於轉投資。代表公司有擴張計劃，建議了解轉投資標的和預期效益。`;
+                } else if (mainPurpose === '資本支出') {
+                    content = `搜尋結果中，多數CB用於資本支出（廠房、設備）。代表公司正在擴大產能，建議評估產業景氣和擴產效益。`;
+                } else if (mainPurpose === '營運資金') {
+                    content = `搜尋結果中，多數CB用於營運資金。建議評估公司現金流狀況和營運需求。`;
+                }
+
+                return {
+                    type: 'tip',
+                    icon: '💼',
+                    title: '資金用途分析',
+                    content: content,
+                    keywords: [mainPurpose, '用途分析', '投資評估']
+                };
+            }
+
+            return null;
+        }
+
+        // 產生市場觀察
+        function generateMarketObservations(articles, cbResults, searchTerm) {
+            const observations = [];
+
+            // 如果找到相關文章和CB，建議交叉閱讀
+            if (articles.length > 0 && cbResults.length > 0) {
+                observations.push({
+                    type: 'success',
+                    icon: '📚',
+                    title: '學習建議',
+                    content: `找到 ${articles.length} 篇相關文章和 ${cbResults.length} 檔CB資料！建議先閱讀文章了解投資原理和策略，再查看CB具體資料進行評估。理論與實務結合，投資更有把握。`,
+                    keywords: ['理論實務', '交叉學習', '投資評估']
+                });
+            }
+
+            // 如果是數字搜尋（可能是代號）
+            if (/^\d+$/.test(searchTerm)) {
+                if (cbResults.length > 0) {
+                    observations.push({
+                        type: 'tip',
+                        icon: '🔍',
+                        title: '深度研究建議',
+                        content: '您搜尋的是CB代號或股票代號。建議進一步查看：1) 該公司的產業地位 2) 歷史財務表現 3) CB發行條件 4) 相關的投資文章。完整的研究是成功投資的基礎。',
+                        keywords: ['深度研究', '基本面', '發行條件']
+                    });
+                }
+            }
+
+            return observations;
+        }
+
+        // 切換分頁（更新）
         function switchTab(tab) {
             currentTab = tab;
             
