@@ -313,6 +313,72 @@
             padding: 40px;
             color: #7f8c8d;
         }
+
+        /* 統計資料 */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .stat-title {
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            color: #3498db;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .stat-bar {
+            background: #ecf0f1;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            transition: width 0.5s;
+        }
+
+        .stat-list {
+            list-style: none;
+        }
+
+        .stat-list-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-list-item:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
@@ -349,14 +415,22 @@
                 <button class="tab-button active" onclick="switchTab('articles')">
                     📚 文章結果 <span id="articleCount"></span>
                 </button>
+                <button class="tab-button" onclick="switchTab('stats')">
+                    📊 資料統計
+                </button>
                 <button class="tab-button" onclick="switchTab('cb')">
-                    📊 CB資料 <span id="cbCount"></span>
+                    💾 CB資料 <span id="cbCount"></span>
                 </button>
             </div>
 
             <!-- 文章結果 -->
             <div class="tab-content active" id="articlesTab">
                 <div id="articlesResults"></div>
+            </div>
+
+            <!-- 資料統計 -->
+            <div class="tab-content" id="statsTab">
+                <div id="statsResults"></div>
             </div>
 
             <!-- CB資料結果 -->
@@ -443,6 +517,9 @@
             // 顯示文章結果
             displayArticles(articleResults, searchTerm);
 
+            // 顯示統計資料
+            displayStats(articleResults, cbResults, searchTerm);
+
             // 顯示CB結果
             displayCB(cbResults, searchTerm);
 
@@ -487,6 +564,201 @@
             });
 
             container.innerHTML = html;
+        }
+
+        // 顯示統計資料
+        function displayStats(articleResults, cbResults, searchTerm) {
+            const container = document.getElementById('statsResults');
+            
+            if (cbResults.length === 0 && articleResults.length === 0) {
+                container.innerHTML = `
+                    <div class="no-result">
+                        <div class="no-result-icon">📊</div>
+                        <h3>沒有資料可以統計</h3>
+                        <p>試試搜尋其他關鍵字</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // 計算統計資料
+            const stats = calculateStats(cbResults);
+            
+            let html = '<div class="stats-container">';
+            
+            // 1. 基本統計
+            html += `
+                <div class="stat-card">
+                    <div class="stat-title">📊 搜尋結果統計</div>
+                    <div class="stat-list">
+                        <div class="stat-list-item">
+                            <span>找到文章</span>
+                            <span style="font-size: 1.5em; font-weight: 700; color: #3498db;">${articleResults.length} 篇</span>
+                        </div>
+                        <div class="stat-list-item">
+                            <span>找到CB資料</span>
+                            <span style="font-size: 1.5em; font-weight: 700; color: #e74c3c;">${cbResults.length} 檔</span>
+                        </div>
+                        <div class="stat-list-item">
+                            <span>搜尋關鍵字</span>
+                            <span style="font-weight: 700; color: #27ae60;">${searchTerm}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 2. CB價格統計
+            if (stats.avgHigh) {
+                html += `
+                    <div class="stat-card">
+                        <div class="stat-title">💰 掛牌最高價</div>
+                        <div class="stat-value">${stats.avgHigh.toFixed(2)} <span style="font-size: 0.5em;">元</span></div>
+                        <div class="stat-label">平均價格</div>
+                        <div class="stat-list" style="margin-top: 15px;">
+                            <div class="stat-list-item">
+                                <span>最高</span>
+                                <span style="color: #e74c3c; font-weight: 700;">${stats.maxHigh.toFixed(2)} 元</span>
+                            </div>
+                            <div class="stat-list-item">
+                                <span>最低</span>
+                                <span style="color: #27ae60; font-weight: 700;">${stats.minHigh.toFixed(2)} 元</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 3. CB價差統計
+            if (stats.avgSpread) {
+                html += `
+                    <div class="stat-card">
+                        <div class="stat-title">📊 掛牌價差</div>
+                        <div class="stat-value">${stats.avgSpread.toFixed(2)} <span style="font-size: 0.5em;">元</span></div>
+                        <div class="stat-label">平均價差</div>
+                        <div class="stat-list" style="margin-top: 15px;">
+                            <div class="stat-list-item">
+                                <span>最大價差</span>
+                                <span style="color: #e74c3c; font-weight: 700;">${stats.maxSpread.toFixed(2)} 元</span>
+                            </div>
+                            <div class="stat-list-item">
+                                <span>最小價差</span>
+                                <span style="color: #27ae60; font-weight: 700;">${stats.minSpread.toFixed(2)} 元</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 4. 涵蓋公司統計
+            if (stats.companies > 0) {
+                html += `
+                    <div class="stat-card">
+                        <div class="stat-title">🏢 涵蓋公司數</div>
+                        <div class="stat-value">${stats.companies} <span style="font-size: 0.5em;">家</span></div>
+                        <div class="stat-label">不同公司</div>
+                    </div>
+                `;
+            }
+
+            // 5. 資金用途分布
+            if (Object.keys(stats.purposes).length > 0) {
+                html += `
+                    <div class="stat-card" style="grid-column: 1 / -1;">
+                        <div class="stat-title">💼 資金用途分布</div>
+                        <div class="stat-list" style="margin-top: 15px;">
+                `;
+                
+                const sortedPurposes = Object.entries(stats.purposes).sort((a, b) => b[1] - a[1]);
+                sortedPurposes.forEach(([purpose, count]) => {
+                    const percentage = (count / cbResults.length) * 100;
+                    html += `
+                        <div class="stat-list-item">
+                            <span>${purpose}</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-weight: 700; color: #3498db;">${count} 檔</span>
+                                <span style="color: #7f8c8d; font-size: 0.9em;">(${percentage.toFixed(1)}%)</span>
+                            </div>
+                        </div>
+                        <div class="stat-bar">
+                            <div class="stat-bar-fill" style="width: ${percentage}%"></div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // 計算統計資料
+        function calculateStats(cbResults) {
+            const stats = {
+                avgHigh: 0,
+                maxHigh: 0,
+                minHigh: 0,
+                avgLow: 0,
+                avgSpread: 0,
+                maxSpread: 0,
+                minSpread: 0,
+                companies: 0,
+                purposes: {}
+            };
+
+            if (cbResults.length === 0) return stats;
+
+            // 價格統計
+            const highPrices = [];
+            const lowPrices = [];
+            const spreads = [];
+            const companies = new Set();
+
+            cbResults.forEach(cb => {
+                if (cb.掛牌最高) highPrices.push(cb.掛牌最高);
+                if (cb.掛牌最低) lowPrices.push(cb.掛牌最低);
+                if (cb.掛牌最高 && cb.掛牌最低) {
+                    spreads.push(cb.掛牌最高 - cb.掛牌最低);
+                }
+                if (cb.股票代號) companies.add(cb.股票代號);
+
+                // 資金用途分類
+                const purpose = cb.資金用途 || '';
+                let category = '其他';
+                if (purpose.includes('償還') || purpose.includes('借款')) {
+                    category = '償還借款';
+                } else if (purpose.includes('轉投資') || purpose.includes('投資')) {
+                    category = '轉投資';
+                } else if (purpose.includes('廠房') || purpose.includes('設備') || purpose.includes('擴建')) {
+                    category = '資本支出';
+                } else if (purpose.includes('營運')) {
+                    category = '營運資金';
+                }
+                stats.purposes[category] = (stats.purposes[category] || 0) + 1;
+            });
+
+            if (highPrices.length > 0) {
+                stats.avgHigh = highPrices.reduce((a, b) => a + b, 0) / highPrices.length;
+                stats.maxHigh = Math.max(...highPrices);
+                stats.minHigh = Math.min(...highPrices);
+            }
+
+            if (lowPrices.length > 0) {
+                stats.avgLow = lowPrices.reduce((a, b) => a + b, 0) / lowPrices.length;
+            }
+
+            if (spreads.length > 0) {
+                stats.avgSpread = spreads.reduce((a, b) => a + b, 0) / spreads.length;
+                stats.maxSpread = Math.max(...spreads);
+                stats.minSpread = Math.min(...spreads);
+            }
+
+            stats.companies = companies.size;
+
+            return stats;
         }
 
         // 顯示CB資料
@@ -570,7 +842,14 @@
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
-            document.getElementById(tab === 'articles' ? 'articlesTab' : 'cbTab').classList.add('active');
+            
+            if (tab === 'articles') {
+                document.getElementById('articlesTab').classList.add('active');
+            } else if (tab === 'stats') {
+                document.getElementById('statsTab').classList.add('active');
+            } else if (tab === 'cb') {
+                document.getElementById('cbTab').classList.add('active');
+            }
         }
 
         // 快速搜尋
