@@ -824,21 +824,52 @@
             filterArticles();
         }
 
+        // Smart Search Function (Google-like)
+        function smartSearch(searchTerm, text) {
+            if (!searchTerm || !text) return false;
+            
+            const term = searchTerm.toLowerCase().trim();
+            const content = text.toLowerCase();
+            
+            // 1. 完全匹配（最高優先）
+            if (content.includes(term)) return true;
+            
+            // 2. 分詞搜尋
+            const keywords = term.split(/\s+/);
+            if (keywords.length > 1) {
+                // 所有關鍵字都要出現
+                return keywords.every(keyword => content.includes(keyword));
+            }
+            
+            // 3. 模糊匹配（部分字元）
+            if (term.length >= 2) {
+                for (let i = 0; i <= term.length - 2; i++) {
+                    if (content.includes(term.substring(i, i + 2))) {
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
+        }
+
         // Filter Articles
         function filterArticles() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
             const category = document.getElementById('categoryFilter').value;
             const audience = document.getElementById('audienceFilter').value;
             const sort = document.getElementById('sortFilter').value;
             
             // Filter
             filteredArticles = allArticles.filter(article => {
-                // Search term
+                // Smart Search (Google-like)
                 const matchesSearch = !searchTerm || 
-                    article.title?.toLowerCase().includes(searchTerm) ||
-                    article.summary?.toLowerCase().includes(searchTerm) ||
-                    article.content?.toLowerCase().includes(searchTerm) ||
-                    article.tags?.some(tag => tag.toLowerCase().includes(searchTerm));
+                    smartSearch(searchTerm, article.title || '') ||
+                    smartSearch(searchTerm, article.summary || '') ||
+                    smartSearch(searchTerm, article.content || '') ||
+                    smartSearch(searchTerm, (article.key_points || []).join(' ')) ||
+                    (article.tags || []).some(tag => smartSearch(searchTerm, tag)) ||
+                    smartSearch(searchTerm, article.category || '');
                 
                 // Category
                 const matchesCategory = !category || article.category === category;
@@ -848,7 +879,7 @@
                 
                 // Tags
                 const matchesTags = currentTags.length === 0 || 
-                    currentTags.every(tag => article.tags?.includes(tag));
+                    currentTags.every(tag => (article.tags || []).includes(tag));
                 
                 return matchesSearch && matchesCategory && matchesAudience && matchesTags;
             });
@@ -857,9 +888,9 @@
             filteredArticles.sort((a, b) => {
                 switch(sort) {
                     case 'date-desc':
-                        return new Date(b.date) - new Date(a.date);
+                        return new Date(b.date || '2020-01-01') - new Date(a.date || '2020-01-01');
                     case 'date-asc':
-                        return new Date(a.date) - new Date(b.date);
+                        return new Date(a.date || '2020-01-01') - new Date(b.date || '2020-01-01');
                     case 'time-asc':
                         return (a.reading_time || 0) - (b.reading_time || 0);
                     case 'time-desc':
