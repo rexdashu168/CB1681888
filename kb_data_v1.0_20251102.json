@@ -1884,69 +1884,6 @@
       "reading_time": 15
     },
     {
-      "id": "case_010",
-      "title": "CASE010_台表科二_科技股CB案例",
-      "date": "2024-03-01",
-      "category": "個案研究",
-      "tags": [
-        "個案",
-        "實戰",
-        "台表科二"
-      ],
-      "platform": "方格子",
-      "url": "",
-      "summary": "科技股CB案例，提供完整的投資分析架構與實戰經驗分享。",
-      "content": "",
-      "key_points": [],
-      "rex_quotes": [],
-      "related_articles": [],
-      "practical_tips": [],
-      "target_audience": "進階",
-      "reading_time": 15
-    },
-    {
-      "id": "case_011",
-      "title": "CASE011_元太四_電子紙CB投資案例",
-      "date": "2024-03-01",
-      "category": "個案研究",
-      "tags": [
-        "個案",
-        "實戰",
-        "元太四"
-      ],
-      "platform": "方格子",
-      "url": "",
-      "summary": "電子紙CB投資案例，提供完整的投資分析架構與實戰經驗分享。",
-      "content": "",
-      "key_points": [],
-      "rex_quotes": [],
-      "related_articles": [],
-      "practical_tips": [],
-      "target_audience": "進階",
-      "reading_time": 15
-    },
-    {
-      "id": "case_012",
-      "title": "CASE012_群創八_面板業CB投資案例",
-      "date": "2024-03-01",
-      "category": "個案研究",
-      "tags": [
-        "個案",
-        "實戰",
-        "群創八"
-      ],
-      "platform": "方格子",
-      "url": "",
-      "summary": "面板業CB投資案例，提供完整的投資分析架構與實戰經驗分享。",
-      "content": "",
-      "key_points": [],
-      "rex_quotes": [],
-      "related_articles": [],
-      "practical_tips": [],
-      "target_audience": "進階",
-      "reading_time": 15
-    },
-    {
       "id": "md_kb_correct_001",
       "title": "CB投資風險用詞更正說明_CB現股vs CBAS正確認知",
       "date": "2024-01-15",
@@ -1988,6 +1925,62 @@
       "target_audience": "新手",
       "reading_time": 8,
       "source_file": "CB知識庫_用詞更正說明.md"
+    },
+    {
+      "title": "CASE010_佳邦三_華新集團交叉持股案例",
+      "url": "https://vocus.cc/article/case010",
+      "category": "個案研究",
+      "tags": [
+        "個案",
+        "佳邦三",
+        "華新集團"
+      ],
+      "date": "2024-03-01",
+      "reading_time": 15,
+      "summary": "華新集團教科書級交叉持股案例，焦師父佈局細緻，從45.4漲到90元高檔發債，總溢價17.29%過高。",
+      "key_points": [
+        "焦師父佈局細緻",
+        "從45.4漲到90元（+98.2%）高檔發債",
+        "總溢價17.29%太高"
+      ]
+    },
+    {
+      "title": "CASE011_宏遠證二_金融股借新還舊案例",
+      "url": "https://vocus.cc/article/case011",
+      "category": "個案研究",
+      "tags": [
+        "個案",
+        "宏遠證",
+        "借新還舊",
+        "金融股"
+      ],
+      "date": "2024-03-01",
+      "reading_time": 15,
+      "summary": "金融股借新還舊典型案例，宏遠證一長期跌破100元（最低92.7），Rex預測100元得標，實際100.05元。",
+      "key_points": [
+        "宏遠證一長期跌破100元（最低92.7）",
+        "Rex預測100元得標，實際100.05元",
+        "金融股借新還舊典型"
+      ]
+    },
+    {
+      "title": "CASE012_兆利二_資訊不對稱籌碼集中案例",
+      "url": "https://vocus.cc/article/case012",
+      "category": "個案研究",
+      "tags": [
+        "個案",
+        "兆利",
+        "籌碼集中"
+      ],
+      "date": "2024-03-01",
+      "reading_time": 15,
+      "summary": "資訊不對稱+籌碼極端集中案例，得標率只17%，117筆控盤7200張，大戶成本231.45元/股。",
+      "key_points": [
+        "得標率只17%",
+        "117筆控盤7200張",
+        "大戶成本231.45元/股",
+        "富士達比價444元"
+      ]
     }
   ]
 }
